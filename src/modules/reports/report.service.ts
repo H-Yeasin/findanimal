@@ -12,6 +12,7 @@ import { userModel } from "../usersAuth/user.models";
 import { pointTransactionModel } from "../points/point.models";
 import { PointTransactionType, PointTransactionSource } from "../points/point.interface";
 import { pointConfigModel } from "../points/pointConfig.models";
+import { myanimalModel } from "../myanimal/myanimal.models";
 
 
 const deleteCloudinaryQuietly = async (publicId?: string): Promise<void> => {
@@ -30,7 +31,19 @@ export const reportService = {
     const authorId = req.user?._id;
     if (!authorId) throw new CustomError(401, "Unauthorized");
     const body = req.body;
+    const { myAnimalId, ...reportBody } = body;
     let locationData = undefined;
+    let sourceAnimal = undefined;
+
+    if (myAnimalId) {
+      sourceAnimal = await myanimalModel.findById(myAnimalId).lean();
+      if (!sourceAnimal) {
+        throw new CustomError(404, "Animal not found");
+      }
+      if (sourceAnimal.user.toString() !== authorId.toString()) {
+        throw new CustomError(403, "You can only report your own animal");
+      }
+    }
 
     // Parse location if it comes stringified
     if (body.location && typeof body.location === 'string') {
@@ -46,7 +59,12 @@ export const reportService = {
     // Process images
     const multerFiles = req.files as { [fieldname: string]: Express.Multer.File[] };
     const files = multerFiles?.["images"] || [];
-    let images: { public_id: string; secure_url: string }[] = [];
+    let images: {
+      public_id: string;
+      secure_url: string;
+      source: "reportUpload" | "myAnimalPhoto";
+      ownedByReport: boolean;
+    }[] = [];
 
     if (files && files.length > 0) {
       if (files.length > 3) {
@@ -55,16 +73,29 @@ export const reportService = {
       for (const file of files) {
         const result = await uploadCloudinary(file.path);
         if (result) {
-          images.push(result);
+          images.push({
+            public_id: result.public_id,
+            secure_url: result.secure_url,
+            source: "reportUpload",
+            ownedByReport: true,
+          });
         }
       }
+    } else if (sourceAnimal?.photo?.public_id && sourceAnimal?.photo?.secure_url) {
+      images.push({
+        public_id: sourceAnimal.photo.public_id,
+        secure_url: sourceAnimal.photo.secure_url,
+        source: "myAnimalPhoto",
+        ownedByReport: false,
+      });
     }
 
     const payload: any = {
-      ...body,
+      ...reportBody,
       location: locationData,
       images,
       author: authorId,
+      ...(sourceAnimal ? { sourceAnimal: sourceAnimal._id } : {}),
     };
 
     // Auto-generate title if missing
@@ -515,7 +546,7 @@ export const reportService = {
 
       if (images && images.length > 0) {
         for (const img of images) {
-          if (img.public_id) {
+          if (img.public_id && img.ownedByReport !== false) {
             oldPublicIdsToDelete.push(img.public_id);
           }
         }
@@ -523,11 +554,16 @@ export const reportService = {
 
       images = [];
       for (const file of files) {
-        const result = await uploadCloudinary(file.path);
-        if (result) {
-          images.push(result);
-          newPublicIdsToDeleteOnFailure.push(result.public_id);
-        }
+      const result = await uploadCloudinary(file.path);
+      if (result) {
+        images.push({
+          public_id: result.public_id,
+          secure_url: result.secure_url,
+          source: "reportUpload",
+          ownedByReport: true,
+        });
+        newPublicIdsToDeleteOnFailure.push(result.public_id);
+      }
       }
     }
 
@@ -596,7 +632,7 @@ export const reportService = {
       // 3. Delete associated images from Cloudinary
       if (report.images && report.images.length > 0) {
         for (const img of report.images) {
-          if (img.public_id) {
+          if (img.public_id && img.ownedByReport !== false) {
             publicIdsToDelete.push(img.public_id);
           }
         }
@@ -651,7 +687,12 @@ export const reportService = {
       throw new CustomError(500, "Failed to upload image");
     }
 
-    report.images.push(result);
+    report.images.push({
+      public_id: result.public_id,
+      secure_url: result.secure_url,
+      source: "reportUpload",
+      ownedByReport: true,
+    });
     await report.save();
 
     return report;
@@ -678,13 +719,14 @@ export const reportService = {
     }
 
     // Check if image exists in report
-    const imageExists = report.images.some(img => img.public_id === public_id);
-    if (!imageExists) {
+    const imageToRemove = report.images.find(img => img.public_id === public_id);
+    if (!imageToRemove) {
       throw new CustomError(404, "Image not found in this report");
     }
 
-    // Delete from Cloudinary
-    await deleteCloudinary(public_id);
+    if (imageToRemove.ownedByReport !== false) {
+      await deleteCloudinary(public_id);
+    }
 
     // Remove from array
     report.images = report.images.filter(img => img.public_id !== public_id);

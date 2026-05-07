@@ -25,6 +25,10 @@ const reportSchema = new Schema<IReport>(
       ref: "User",
       required: true,
     },
+    sourceAnimal: {
+      type: Schema.Types.ObjectId,
+      ref: "Myanimal",
+    },
     species: {
       type: String,
       enum: Object.values(AnimalSpecies),
@@ -62,6 +66,15 @@ const reportSchema = new Schema<IReport>(
       {
         public_id: { type: String, required: true },
         secure_url: { type: String, required: true },
+        source: {
+          type: String,
+          enum: ["reportUpload", "myAnimalPhoto"],
+          default: "reportUpload",
+        },
+        ownedByReport: {
+          type: Boolean,
+          default: true,
+        },
       }
     ],
     hasMicrochip: {

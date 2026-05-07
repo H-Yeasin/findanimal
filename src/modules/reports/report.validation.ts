@@ -13,6 +13,7 @@ export const createReportSchema = z
   .object({
   animalName: z.string().min(1, "Animal name is required"),
   title: z.string().optional(),
+  myAnimalId: z.string().min(1).optional(),
   species: z.enum(Object.values(AnimalSpecies) as [string, ...string[]]),
   breed: z.string().min(1, "Breed is required"),
   gender: z.enum(Object.values(AnimalGender) as [string, ...string[]]),

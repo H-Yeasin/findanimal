@@ -41,6 +41,7 @@ export interface IReport extends Document {
   animalName: string;
   title: string;
   author: Types.ObjectId | string;
+  sourceAnimal?: Types.ObjectId | string;
   species: AnimalSpecies;
   breed: string;
   gender: AnimalGender;
@@ -51,6 +52,8 @@ export interface IReport extends Document {
   images: {
     public_id: string;
     secure_url: string;
+    source?: "reportUpload" | "myAnimalPhoto";
+    ownedByReport?: boolean;
   }[];
   hasMicrochip: YesNoUnknown;
   hasTattoo: YesNoUnknown;
@@ -68,6 +71,7 @@ export interface CreateReportPayload {
   animalName: string;
   title?: string;
   species: string;
+  myAnimalId?: string;
   breed: string;
   gender: string;
   age: string;
@@ -77,6 +81,8 @@ export interface CreateReportPayload {
   images: {
     public_id: string;
     secure_url: string;
+    source?: "reportUpload" | "myAnimalPhoto";
+    ownedByReport?: boolean;
   }[];
   hasMicrochip: string;
   hasTattoo: string;

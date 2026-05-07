@@ -2,12 +2,53 @@ import mongoose, { Schema } from "mongoose";
 import slugify from "slugify";
 import CustomError from "../../helpers/CustomError";
 import { IMyanimal, MyanimalStatus } from "./myanimal.interface";
+import {
+  AnimalAge,
+  AnimalGender,
+  AnimalSpecies,
+  YesNoUnknown,
+} from "../reports/report.interface";
 
 const myanimalSchema = new Schema<IMyanimal>(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     title: { type: String, required: true },
     description: { type: String, required: true },
+    species: {
+      type: String,
+      enum: Object.values(AnimalSpecies),
+      required: true,
+    },
+    breed: { type: String, required: true, trim: true },
+    gender: {
+      type: String,
+      enum: Object.values(AnimalGender),
+      required: true,
+    },
+    age: {
+      type: String,
+      enum: Object.values(AnimalAge),
+      required: true,
+      default: AnimalAge.ADULT,
+    },
+    hasMicrochip: {
+      type: String,
+      enum: Object.values(YesNoUnknown),
+      required: true,
+      default: YesNoUnknown.UNKNOWN,
+    },
+    hasTattoo: {
+      type: String,
+      enum: Object.values(YesNoUnknown),
+      required: true,
+      default: YesNoUnknown.UNKNOWN,
+    },
+    hasCollarOrHarness: {
+      type: String,
+      enum: Object.values(YesNoUnknown),
+      required: true,
+      default: YesNoUnknown.UNKNOWN,
+    },
     photo: {
       public_id: { type: String },
       secure_url: { type: String },
