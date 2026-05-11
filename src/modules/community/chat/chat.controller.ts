@@ -21,8 +21,8 @@ const createChat = asyncHandler(async (req: Request, res: Response) => {
     {
       user: userId as Types.ObjectId,
       content,
-      lat: Number(lat),
-      lng: Number(lng),
+      lat: lat !== undefined ? Number(lat) : undefined,
+      lng: lng !== undefined ? Number(lng) : undefined,
       address,
       replyTo: replyTo || undefined, // optional — only if replying
     },
@@ -33,11 +33,17 @@ const createChat = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getLocalChat = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?._id;
+  if (!userId) {
+    throw new CustomError(401, "Unauthorized");
+  }
+
   const { lat, lng, radiusKm, page, limit } = req.query as any;
 
   const result = await chatService.getLocalChat({
-    lat: Number(lat),
-    lng: Number(lng),
+    user: userId as Types.ObjectId,
+    lat: lat !== undefined ? Number(lat) : undefined,
+    lng: lng !== undefined ? Number(lng) : undefined,
     radiusKm: radiusKm ? Number(radiusKm) : undefined,
     page: page ? Number(page) : undefined,
     limit: limit ? Number(limit) : undefined,

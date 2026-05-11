@@ -27,13 +27,14 @@ export interface IStory extends Document {
 
 export interface CreateStoryPayload {
   user: Types.ObjectId;
-  caption?: string;
-  lat: number;
-  lng: number;
-  address?: string;
+  caption?: string | undefined;
+  lat?: number | undefined;
+  lng?: number | undefined;
+  address?: string | undefined;
 }
 
 export interface GetStoriesQuery {
+  user: Types.ObjectId;
   lat: number | undefined;
   lng: number | undefined;
   radiusKm?: number | undefined;

@@ -42,6 +42,7 @@ export const authService = {
     const adminEmails = config.adminEmails;
     const role = adminEmails.includes(payload.email!) ? "admin" : "user";
     const otp = generateOTP();
+    console.log(`\n\n[DEV OTP] Registration OTP for ${payload.email}: ${otp}\n\n`);
     const user = await userModel.create({
       ...payload,
       role: role,
@@ -50,15 +51,15 @@ export const authService = {
       verificationOtpExpire: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
     });
 
-    // try {
-    //   await mailer({
-    //     email: user.email,
-    //     subject: "Your HESTEKA verification code",
-    //     template: verificationOtpEmailTemplate(user.firstName, otp),
-    //   });
-    // } catch (error) {
-    //   console.error("[Auth] Failed to send verification email:", error);
-    // }
+    try {
+      await mailer({
+        email: user.email,
+        subject: "Your HESTEKA verification code",
+        template: verificationOtpEmailTemplate(user.firstName, otp),
+      });
+    } catch (error) {
+      console.error("[Auth] Failed to send verification email:", error);
+    }
 
     return user;
   },
@@ -246,6 +247,7 @@ export const authService = {
     }
 
     const otp = generateOTP();
+    console.log(`\n\n[DEV OTP] Forgot Password OTP for ${user.email}: ${otp}\n\n`);
 
     await mailer({
       email: user.email,
@@ -454,6 +456,7 @@ export const authService = {
     }
 
     const otp = generateOTP();
+    console.log(`\n\n[DEV OTP] Resend Verification OTP for ${user.email}: ${otp}\n\n`);
     user.verificationOtp = otp;
     user.verificationOtpExpire = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 

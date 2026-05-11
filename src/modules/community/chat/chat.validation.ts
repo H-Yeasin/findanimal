@@ -23,13 +23,15 @@ export const createChatSchema = z.object({
       `Message cannot exceed ${COMMUNITY_CONFIG.CHAT_MESSAGE_MAX_LENGTH} characters`,
     ),
   lat: z
-    .number({ error: "Latitude is required" })
+    .number()
     .min(-90, "Latitude must be between -90 and 90")
-    .max(90, "Latitude must be between -90 and 90"),
+    .max(90, "Latitude must be between -90 and 90")
+    .optional(),
   lng: z
-    .number({ error: "Longitude is required" })
+    .number()
     .min(-180, "Longitude must be between -180 and 180")
-    .max(180, "Longitude must be between -180 and 180"),
+    .max(180, "Longitude must be between -180 and 180")
+    .optional(),
   address: z.string().trim().optional(),
   media: z
     .array(mediaSchema)

@@ -45,13 +45,14 @@ export interface CreateChatPayload {
   user: Types.ObjectId;
   content: string;
   media?: IChatMedia[];
-  lat: number;
-  lng: number;
-  address?: string;
-  replyTo?: string; // raw string from req.body, validated in service
+  lat?: number | undefined;
+  lng?: number | undefined;
+  address?: string | undefined;
+  replyTo?: string | undefined; // raw string from req.body, validated in service
 }
 
 export interface GetLocalChatQuery {
+  user: Types.ObjectId;
   lat: number | undefined;
   lng: number | undefined;
   radiusKm?: number | undefined;

@@ -6,7 +6,7 @@ export const createStorySchema = z.object({
     .trim()
     .max(200, "Caption cannot exceed 200 characters")
     .optional(),
-  lat: z.number({ error: "Latitude is required" }).min(-90).max(90),
-  lng: z.number({ error: "Longitude is required" }).min(-180).max(180),
+  lat: z.number().min(-90).max(90).optional(),
+  lng: z.number().min(-180).max(180).optional(),
   address: z.string().trim().optional(),
 });

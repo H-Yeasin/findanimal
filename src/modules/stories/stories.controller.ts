@@ -21,8 +21,8 @@ const createStory = asyncHandler(async (req: Request, res: Response) => {
     {
       user: userId as Types.ObjectId,
       caption,
-      lat: Number(lat),
-      lng: Number(lng),
+      lat: lat !== undefined ? Number(lat) : undefined,
+      lng: lng !== undefined ? Number(lng) : undefined,
       address,
     },
     req.file,
@@ -32,11 +32,17 @@ const createStory = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getLocalStories = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?._id;
+  if (!userId) {
+    throw new CustomError(401, "Unauthorized");
+  }
+
   const { lat, lng, radiusKm, page, limit } = req.query as any;
 
   const result = await storyService.getLocalStories({
-    lat: Number(lat),
-    lng: Number(lng),
+    user: userId as Types.ObjectId,
+    lat: lat !== undefined ? Number(lat) : undefined,
+    lng: lng !== undefined ? Number(lng) : undefined,
     radiusKm: radiusKm ? Number(radiusKm) : undefined,
     page: page ? Number(page) : undefined,
     limit: limit ? Number(limit) : undefined,

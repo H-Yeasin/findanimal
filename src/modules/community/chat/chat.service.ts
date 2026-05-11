@@ -17,6 +17,7 @@ import {
   calculateDistanceKm,
   Coordinates,
 } from "../shared/geo.utils";
+import { resolveCommunityCoordinates } from "../shared/location-resolver";
 import { paginationHelper } from "../../../utils/pagination";
 import {
   uploadMediaCloudinary,
@@ -112,8 +113,20 @@ const createChat = async (
     originalOwnerId = originalMessage.user.toString();
   }
 
-  const location = toGeoPoint(lat, lng, address);
-  const geohash = encodeGeohash(lat, lng);
+  const resolvedLocation = await resolveCommunityCoordinates({
+    userId: user,
+    lat,
+    lng,
+    address,
+    action: "create a community post",
+  });
+
+  const location = toGeoPoint(
+    resolvedLocation.lat,
+    resolvedLocation.lng,
+    resolvedLocation.address,
+  );
+  const geohash = encodeGeohash(resolvedLocation.lat, resolvedLocation.lng);
 
   let media: IChatMedia[] = [];
   if (files && files.length > 0) {
@@ -145,8 +158,8 @@ const createChat = async (
 
   // ─── Broadcast to nearby users ───────────────────────────────────
   broadcastToGeohashes(
-    lat,
-    lng,
+    resolvedLocation.lat,
+    resolvedLocation.lng,
     ChatSocketEvents.CHAT_NEW_MESSAGE,
     populatedChat,
   );
@@ -177,12 +190,19 @@ const createChat = async (
 };
 
 const getLocalChat = async (query: GetLocalChatQuery) => {
-  const { lat, lng, radiusKm, page, limit } = query;
+  const { user, lat, lng, radiusKm, page, limit } = query;
   const pagination = paginationHelper(String(page), String(limit));
 
+  const resolvedLocation = await resolveCommunityCoordinates({
+    userId: user,
+    lat,
+    lng,
+    action: "fetch local community posts",
+  });
+
   const geoFilter = buildGeoWithinQuery(
-    lat as number,
-    lng as number,
+    resolvedLocation.lat,
+    resolvedLocation.lng,
     radiusKm!,
   );
 
@@ -205,7 +225,10 @@ const getLocalChat = async (query: GetLocalChatQuery) => {
     chatModel.countDocuments(geoFilter),
   ]);
 
-  const userCoords = { lat, lng };
+  const userCoords = {
+    lat: resolvedLocation.lat,
+    lng: resolvedLocation.lng,
+  };
   const messagesWithDistance = messages.map((msg) => {
     const msgCoords = fromGeoPoint(msg.location);
     const distanceKm = calculateDistanceKm(

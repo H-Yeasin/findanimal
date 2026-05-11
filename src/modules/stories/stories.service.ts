@@ -22,6 +22,7 @@ import {
   toGeoPoint,
 } from "../community/shared/geo.utils";
 import { COMMUNITY_CONFIG } from "../community/shared/community.config";
+import { resolveCommunityCoordinates } from "../community/shared/location-resolver";
 import { storyModel } from "./stories.models";
 import { paginationHelper } from "../../utils/pagination";
 
@@ -65,8 +66,20 @@ const createStory = async (
 
   const { user, caption, lat, lng, address } = payload;
 
-  const location = toGeoPoint(lat, lng, address);
-  const geohash = encodeGeohash(lat, lng);
+  const resolvedLocation = await resolveCommunityCoordinates({
+    userId: user,
+    lat,
+    lng,
+    address,
+    action: "create a community story",
+  });
+
+  const location = toGeoPoint(
+    resolvedLocation.lat,
+    resolvedLocation.lng,
+    resolvedLocation.address,
+  );
+  const geohash = encodeGeohash(resolvedLocation.lat, resolvedLocation.lng);
 
   const media = await uploadStoryMedia(file);
 
@@ -94,12 +107,19 @@ const createStory = async (
 };
 
 const getLocalStories = async (query: GetStoriesQuery) => {
-  const { lat, lng, radiusKm, page, limit } = query;
+  const { user, lat, lng, radiusKm, page, limit } = query;
   const pagination = paginationHelper(String(page), String(limit));
 
+  const resolvedLocation = await resolveCommunityCoordinates({
+    userId: user,
+    lat,
+    lng,
+    action: "fetch local community stories",
+  });
+
   const geoFilter = buildGeoWithinQuery(
-    lat as number,
-    lng as number,
+    resolvedLocation.lat,
+    resolvedLocation.lng,
     radiusKm!,
   );
 
@@ -120,7 +140,10 @@ const getLocalStories = async (query: GetStoriesQuery) => {
     storyModel.countDocuments(filter),
   ]);
 
-  const userCoords = { lat, lng };
+  const userCoords = {
+    lat: resolvedLocation.lat,
+    lng: resolvedLocation.lng,
+  };
   const storiesWithDistance = stories.map((story) => {
     const storyCoords = fromGeoPoint(story.location);
     const distanceKm = calculateDistanceKm(
