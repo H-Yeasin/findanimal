@@ -29,6 +29,7 @@ export const getmyprofile = asyncHandler(async (req, res) => {
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const result = await userService.updateUser(req);
   ApiResponse.sendSuccess(res, 200, "User updated successfully", {
+    _id: result.id,
     email: result.email,
     firstName: result.firstName,
     lastName: result.lastName,
@@ -38,6 +39,12 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
     postalCode: result.postalCode,
     country: result.country,
     company: result.company,
+    pointsBalance: result.pointsBalance,
+    selfIntroduction: result.selfIntroduction,
+    profession: result.profession,
+    role: result.role,
+    status: result.status,
+    isVerified: result.isVerified,
     location: result.location,
     profileImage: result.profileImage,
   });
