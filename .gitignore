@@ -23,6 +23,31 @@ build/Release
 out/
 
 # ========================
+# Uploads (user-generated files)
+# ========================
+uploads/
+
+# ========================
+# Backup & Bundle Files
+# ========================
+*.bundle
+*.zip
+backup.bundle
+abcnerd-backend.zip
+
+# ========================
+# Postman Collections (optional: remove if you want to share these)
+# ========================
+*.postman_collection.json
+postman_community.json
+Master_API_Collection.json
+
+# ========================
+# Scratch / Temp
+# ========================
+scratch/
+
+# ========================
 # Source library exceptions
 # ========================
 src/lib/*
@@ -88,11 +113,6 @@ lib-cov/
 .pnp.*
 
 # ========================
-# Next.js
-# ========================
-.next/
-
-# ========================
 # VS Code
 # ========================
 .vscode/*
@@ -125,10 +145,7 @@ $RECYCLE.BIN/
 # Misc
 # ========================
 .tern-port
-bower_components/
 .lock-wscript
 .node_repl_history
-*.stackdump
 CLAUDE.md
-abcnerd-backend.zip
 .serverless/
