@@ -147,8 +147,8 @@ export const authService = {
       })) as IUser;
 
       notificationService.notifyAdmins(
-        "New Partner Registration",
-        `A new partner "${company}" has registered and requires approval.`,
+        "Nouvelle inscription partenaire",
+        `Un nouveau partenaire "${company}" s'est inscrit et nécessite une approbation.`,
         NotificationType.NEW_PARTNER
       ).catch(err => console.error("Admin Notification Error:", err));
 

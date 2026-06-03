@@ -464,17 +464,17 @@ export const rewardService = {
         let body = "";
 
         if (newStatus === RedemptionStatus.SHIPPED) {
-          title = "Reward Shipped!";
-          body = "Good news! Your reward item has been shipped and is on its way.";
+          title = "Récompense expédiée !";
+          body = "Bonne nouvelle ! Votre récompense a été expédiée et est en route.";
         } else if (newStatus === RedemptionStatus.DELIVERED) {
-          title = "Reward Delivered!";
-          body = "Your reward item has been delivered. Enjoy!";
+          title = "Récompense livrée !";
+          body = "Votre récompense a été livrée. Profitez-en bien !";
         } else if (newStatus === RedemptionStatus.EMAIL_SENT) {
-          title = "Gift Card Sent!";
-          body = "Great news! Your gift card code has been sent to your email. Check your inbox!";
+          title = "Carte cadeau envoyée !";
+          body = "Bonne nouvelle ! Votre code de carte cadeau a été envoyé par e-mail. Vérifiez votre boîte de réception !";
         } else if (newStatus === RedemptionStatus.CANCELLED) {
-          title = "Redemption Rejected";
-          body = "Your reward redemption request was rejected. Points have been refunded to your balance.";
+          title = "Échange refusé";
+          body = "Votre demande d'échange de récompense a été refusée. Les points ont été remboursés sur votre solde.";
         }
 
         if (title && body) {

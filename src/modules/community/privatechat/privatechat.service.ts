@@ -282,16 +282,16 @@ const sendMessage = async (
 
   const senderName = senderUser
     ? `${senderUser.firstName} ${senderUser.lastName}`
-    : "Someone";
+    : "Quelqu'un";
 
   const preview =
     content?.length > 60
       ? `${content.slice(0, 60)}...`
-      : content || "Sent an attachment";
+      : content || "A envoyé une pièce jointe";
 
   await notificationService.notifySingleUser(
     receiverId,
-    `New message from ${senderName}`,
+    `Nouveau message de ${senderName}`,
     preview,
     NotificationType.SYSTEM,
   );

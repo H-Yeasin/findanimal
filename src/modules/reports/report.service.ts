@@ -136,8 +136,8 @@ export const reportService = {
     }
 
     // Fire & Forget Notification
-    const baseTitle = "New Animal Report Nearby!";
-    const baseDesc = `A new report "${newReport.title}" was just created near you.`;
+    const baseTitle = "Nouveau signalement à proximité !";
+    const baseDesc = `Un nouveau signalement "${newReport.title}" vient d'être créé près de chez vous.`;
     
     if (newReport.location && newReport.location.coordinates && newReport.location.coordinates.length >= 2) {
       const lng = newReport.location.coordinates[0] as number;
@@ -150,8 +150,8 @@ export const reportService = {
     }
 
     notificationService.notifyAdmins(
-      "New Report Created",
-      `A new report "${newReport.title}" needs attention.`,
+      "Nouveau signalement créé",
+      `Un nouveau signalement "${newReport.title}" nécessite votre attention.`,
       NotificationType.NEW_REPORT
     ).catch((err) => console.error("Admin Notification Error:", err));
 

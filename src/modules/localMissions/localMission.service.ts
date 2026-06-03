@@ -88,8 +88,8 @@ export const localMissionService = {
       });
 
       // Fire & Forget Notification
-      const baseTitle = "New Local Mission Available!";
-      const baseDesc = `A new mission "${mission.title}" was just created near you. Help out and earn points!`;
+      const baseTitle = "Nouvelle mission locale disponible !";
+      const baseDesc = `Une nouvelle mission "${mission.title}" vient d'être créée près de chez vous. Participez et gagnez des points !`;
 
       if (mission.location && mission.location.coordinates && mission.location.coordinates.length >= 2) {
         const lng = mission.location.coordinates[0] as number;
@@ -102,8 +102,8 @@ export const localMissionService = {
       }
 
       notificationService.notifyAdmins(
-        "New Local Mission",
-        `Partner "${partner.company}" created a new mission "${mission.title}".`,
+        "Nouvelle mission locale",
+        `Le partenaire "${partner.company}" a créé une nouvelle mission "${mission.title}".`,
         NotificationType.NEW_MISSION
       ).catch((err) => console.error("Admin Notification Error:", err));
 
@@ -389,8 +389,8 @@ export const localMissionService = {
       if (result && result.participation) {
         notificationService.notifySingleUser(
           participation.user.toString(),
-          "Points Earned!",
-          `Congratulations! You've earned ${points} points for completely participating in the mission "${mission.title}".`,
+          "Points gagnés !",
+          `Félicitations ! Vous avez gagné ${points} points pour votre participation à la mission "${mission.title}".`,
           NotificationType.POINTS_EARNED
         ).catch((err) => console.error("Notification Error:", err));
       }
@@ -456,8 +456,8 @@ export const localMissionService = {
       participants.forEach((p) => {
         notificationService.notifySingleUser(
           p.user.toString(),
-          "Mission Cancelled",
-          `The local mission "${mission.title}" has been cancelled by the partner.`,
+          "Mission annulée",
+          `La mission locale "${mission.title}" a été annulée par le partenaire.`,
           NotificationType.MISSION_CANCELLED
         ).catch((err) => console.error("Notification Error:", err));
       });

@@ -70,8 +70,8 @@ export const donationProofService = {
     });
 
     notificationService.notifyAdmins(
-      "New Donation Proof",
-      `A new donation proof of ${data.amount} units was submitted and requires approval.`,
+      "Nouvelle preuve de soutien",
+      `Une nouvelle preuve de soutien de ${data.amount} unités a été soumise et nécessite une approbation.`,
       NotificationType.NEW_DONATION
     ).catch(err => console.error("Admin Notification Error:", err));
 
@@ -169,8 +169,8 @@ export const donationProofService = {
     if (proof.user) {
       await notificationService.notifySingleUser(
         (proof.user as any)._id.toString(),
-        "Donation Approved!",
-        `Your physical donation of ${proof.amount} has been approved. You've earned ${pointsAwarded} points.`,
+        "Soutien approuvé !",
+        `Votre preuve de soutien de ${proof.amount} a été approuvée. Vous avez gagné ${pointsAwarded} points.`,
         NotificationType.SYSTEM // Or appropriate type
       );
     }
@@ -214,8 +214,8 @@ export const donationProofService = {
     if (proof.user) {
       await notificationService.notifySingleUser(
         (proof.user as any)._id.toString(),
-        "Donation Proof Rejected",
-        `Your physical donation proof has been rejected. Reason: ${adminNote}`,
+        "Preuve de soutien refusée",
+        `Votre preuve de soutien a été refusée. Raison : ${adminNote}`,
         NotificationType.SYSTEM
       );
     }
@@ -281,8 +281,8 @@ export const donationProofService = {
       if (proof.user) {
         await notificationService.notifySingleUser(
           (proof.user as any)._id.toString(),
-          "Donation Approved!",
-          `Your physical donation of ${proof.amount} has been approved via bulk validation. You've earned ${pointsPerDonation} points.`,
+          "Soutien approuvé !",
+          `Votre preuve de soutien de ${proof.amount} a été approuvée par validation groupée. Vous avez gagné ${pointsPerDonation} points.`,
           NotificationType.SYSTEM
         );
       }

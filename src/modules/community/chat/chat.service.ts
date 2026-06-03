@@ -171,7 +171,7 @@ const createChat = async (
     if (!isSelfReply) {
       const replierName = (populatedChat?.user as any)
         ? `${(populatedChat?.user as any).firstName} ${(populatedChat?.user as any).lastName}`
-        : "Someone";
+        : "Quelqu'un";
 
       const preview =
         content.length > 60 ? `${content.slice(0, 60)}...` : content;
@@ -179,8 +179,8 @@ const createChat = async (
       // DB save + socket emit via existing notificationService
       await notificationService.notifySingleUser(
         originalOwnerId,
-        "New reply to your message",
-        `${replierName} replied: "${preview}"`,
+        "Nouvelle réponse à votre message",
+        `${replierName} a répondu : "${preview}"`,
         NotificationType.CHAT_REPLY,
       );
     }
