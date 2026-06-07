@@ -151,10 +151,10 @@ export const paypalWebhookHandler = async (
           );
 
           // 🎁 Award points for donation if user ID is available
-          if (payment.userId) {
+          if (payment.user) {
             try {
               await pointService.awardPointsForDonation(
-                payment.userId,
+                payment.user.toString(),
                 payment.amount,
               );
             } catch (err) {

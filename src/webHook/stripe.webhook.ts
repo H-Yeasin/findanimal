@@ -62,10 +62,10 @@ export const stripeWebhookHandler = async (
           );
 
           // 🎁 Award points for donation if user ID is available
-          if (payment.userId) {
+          if (payment.user) {
             try {
               await pointService.awardPointsForDonation(
-                payment.userId,
+                payment.user.toString(),
                 paymentIntent.amount / 100,
               );
             } catch (err) {

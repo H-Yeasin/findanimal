@@ -190,7 +190,7 @@ export const pointService = {
   async awardPointsForDonation(
     userId: string,
     amount: number,
-    source: PointTransactionSource = PointTransactionSource.PHYSICAL_DONATION,
+    source: PointTransactionSource = PointTransactionSource.ONLINE_DONATION,
   ) {
     const config = await pointConfigModel.findOne();
     
