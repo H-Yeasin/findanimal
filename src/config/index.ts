@@ -37,7 +37,8 @@ const config = {
     googleClientId: process.env.GOOGLE_CLIENT_ID, // Web Client ID (used by backend)
     googleIosClientId: process.env.GOOGLE_IOS_CLIENT_ID, // iOS Client ID (for Flutter iOS)
     googleAndroidClientId: process.env.GOOGLE_ANDROID_CLIENT_ID, // Android Client ID (for Flutter Android)
-    appleClientId: process.env.APPLE_CLIENT_ID,
+    appleClientId: process.env.APPLE_CLIENT_ID, // Bundle ID for iOS native (e.g., com.emmafve.hesteka)
+    appleServiceId: process.env.APPLE_SERVICE_ID, // Service ID for Android/Web (if different from Bundle ID)
   },
 
   //password reset token
