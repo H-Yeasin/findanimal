@@ -442,13 +442,24 @@ export const authService = {
     let email: string | undefined;
 
     try {
+      // Apple uses different audiences depending on the platform:
+      //   - iOS native Sign In:    the app's Bundle ID  (e.g., com.emmafve.hesteka)
+      //   - Android / Web Sign In: the Service ID        (if different from Bundle ID)
+      const validAudiences: string[] = [
+        config.provider.appleClientId as string,
+      ];
+      if (config.provider.appleServiceId) {
+        validAudiences.push(config.provider.appleServiceId as string);
+      }
+
       const decoded = await appleSignin.verifyIdToken(idToken, {
-        audience: config.provider.appleClientId as string,
+        audience: validAudiences.length > 1 ? validAudiences : validAudiences[0],
       });
       appleId = decoded.sub;
       email = decoded.email;
     } catch (error: any) {
       console.error("[Auth] Apple token verification failed:", error.message);
+      console.error("[Auth] Expected audience(s):", config.provider.appleClientId, config.provider.appleServiceId || "(none)");
       throw new CustomError(401, "Invalid Apple token");
     }
 
